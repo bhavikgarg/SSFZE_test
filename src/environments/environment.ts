@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-
+  baseHREF: '',
   firebaseConf : {
     apiKey: "AIzaSyAc5tBRzRW5seB6X-nT-v74h9FvoEC6WCE",
     authDomain: "angular-cf-test.firebaseapp.com",
