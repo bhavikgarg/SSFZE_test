@@ -9,57 +9,59 @@ import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 })
 export class LoginComponent {
 
-  loginForm: FormGroup;
+  // loginForm: FormGroup;
  
   constructor(
-    public authService: AuthService,
+    public auth: AuthService,
     private router: Router,
-    private formBuilder: FormBuilder
+    // private formBuilder: FormBuilder
     ){
-    this.checkUserInfo();
+    // this.checkUserInfo();
   }
 
-  ngOnInit() {
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
-    });
-  }
+  // ngOnInit() {
+  //   this.loginForm = this.formBuilder.group({
+  //     email: ['', [Validators.required, Validators.email]],
+  //     password: ['', [Validators.required, Validators.minLength(6)]]
+  //   });
+  // }
 
   checkUserInfo() {
-    if (this.authService.isUserLoggedIn) {
+    // if (this.auth.isUserLoggedIn) {
       // this.router.navigate(['/user'])
-    }
+    // }
   }
 
-  get email(){
-    return this.loginForm.get('email')
-  }
-  get password(){
-    return this.loginForm.get('password')
-  }
+  // get email(){
+  //   return this.loginForm.get('email')
+  // }
+  // get password(){
+  //   return this.loginForm.get('password')
+  // }
 
-  onSubmit(): void {
-    // this.errorMessage = this.valdator.validateForm(this.email, this.password);
-  	if (this.loginForm.valid) {
-      console.log(this.loginForm.value)
-    	// this.authService.loginWithEmail(this.email, this.password)
-     //    .then(() =>{
-     //    	alert('successfully LoggedIn');
-    	// 	  this.clearErrorMessage();
-     //    	// this.router.navigate(['/user'])
-     //    })
-     //    .catch(_error => {
-     //      this.error = _error
-     //      console.log("ERROR", Error)
-     //      // this.router.navigate(['/'])
-     //    })
-    }
-  }
+  // onSubmit(): void {
+  //   // this.errorMessage = this.valdator.validateForm(this.email, this.password);
+  // 	if (this.loginForm.valid) {
+  //     console.log(this.loginForm.value)
+  //     this.auth.googleLogin();
+  //     // this.auth.updateUserData(this.loginForm.value)
+  //   	// this.auth.loginWithEmail(this.email, this.password)
+  //    //    .then(() =>{
+  //    //    	alert('successfully LoggedIn');
+  //   	// 	  this.clearErrorMessage();
+  //    //    	// this.router.navigate(['/user'])
+  //    //    })
+  //    //    .catch(_error => {
+  //    //      this.error = _error
+  //    //      console.log("ERROR", Error)
+  //    //      // this.router.navigate(['/'])
+  //    //    })
+  //   }
+  // }
 
   // sendResetEmail() {
   //   this.clearErrorMessage()
-  //   this.authService.resetPassword(this.email)
+  //   this.auth.resetPassword(this.email)
   //     .then(() => 
   //     	console.log('successFully send'))
   //     .catch(_error => {
@@ -67,7 +69,7 @@ export class LoginComponent {
   //     })
   // }
 
-  navigateSignup(){
-    this.router.navigateByUrl('auth/signup');
-  }
+  // navigateSignup(){
+  //   this.router.navigateByUrl('auth/signup');
+  // }
 }

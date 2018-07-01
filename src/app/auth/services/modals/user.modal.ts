@@ -4,13 +4,13 @@ export interface Roles{
 }
 
 export class User{
-	email: String;
-	password: String;
+	uid: string;
+	email: string;
 	role: Roles;
 
 	constructor(authData){
+		this.uid = authData.uid;
 		this.email = authData.email;
-		this.password = authData.password;
 		this.role = { user: true};
 	}
 }

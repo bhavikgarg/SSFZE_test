@@ -16,7 +16,7 @@ export class SignupComponent {
     private router: Router,
     private formBuilder: FormBuilder
     ){
-    this.checkUserInfo();
+    // this.checkUserInfo();
   }
 
   ngOnInit() {
@@ -34,9 +34,9 @@ export class SignupComponent {
   }
 
   checkUserInfo() {
-    if (this.authService.isUserLoggedIn) {
+    // if (this.authService.isUserLoggedIn) {
       // this.router.navigate(['/user'])
-    }
+    // }
   }
     
   onSignUp(): void {

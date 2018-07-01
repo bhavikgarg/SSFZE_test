@@ -1,20 +1,26 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { AngularFireDatabase } from 'angularfire2/database';
+// import { AngularFireDatabase } from 'angularfire2/database';
+import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import * as firebase from 'firebase/app';
 import { User } from './modals/user.modal'
 
-import { BehaviorSubject, Observable } from 'rxjs';
-import 'rxjs/add/observable/of';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+// import 'rxjs/add/observable/of';
 // import 'rxjs/add/operator/switchMap';
 import { switchMap } from 'rxjs/operators';
 
 @Injectable()
 export class AuthService {
 
-	user: BehaviorSubject<User> = new BehaviorSubject(null);
+	// user: BehaviorSubject<User> = new BehaviorSubject(null);
+  	user$: Observable<User>;
+  	// user: User;
 
+  	// ngOnInit() {
+  	//   this.auth.user$.subscribe(user => this.user = user)
+  	// }
 	// loggedIn = false;
 	// isAdmin = false;
 
@@ -22,50 +28,97 @@ export class AuthService {
 
 	constructor(
 		public afAuth:AngularFireAuth,
-		public db: AngularFireDatabase
-		){
-		this.afAuth.authState
-			.pipe(switchMap(auth => {
-					if(auth){
-						return this.db.object('users/' + auth.uid);
-					} else{
-						return new Observable(null);
-					}
-				})
-			)
-        .subscribe(user => {
-          this.user.next(user)
-        })
+		// public db: AngularFireDatabase,
+      	private afs: AngularFirestore,
+      	private router: Router){
 
-
-
+		this.user$ = this.afAuth.authState.pipe(switchMap(user => {
+				if (user) {
+			    	return this.afs.doc<User>(`users/${user.uid}`).valueChanges()
+			  	} else {
+			    	return new Observable(null)
+			  	}
+			})
+		)
+		// this.afAuth.authState
+		// 	.pipe(switchMap(auth => {
+		// 			if(auth){
+		// 				return this.db.object('users/' + auth.uid);
+		// 			} else{
+		// 				return new Observable(null);
+		// 			}
+		// 		})
+		// 	)
+  //       .subscribe(user => {
+  //         this.user.next(user)
+  //       })
 
 	    // this.afAuth.authState.subscribe((auth) => {
 	    //   this.authState = auth
 	    // });
 	}
-	 
+
+	  ///// Login/Signup //////
+
 	googleLogin() {
 	  const provider = new firebase.auth.GoogleAuthProvider()
+	  return this.oAuthLogin(provider);
+	}
+
+	private oAuthLogin(provider) {
 	  return this.afAuth.auth.signInWithPopup(provider)
-	    .then(credential =>  {
-	        this.updateUser(credential.user)
+	    .then((credential) => {
+	      this.updateUserData(credential.user)
 	    })
 	}
 
 	signOut() {
-	  this.afAuth.auth.signOut()
+	  this.afAuth.auth.signOut().then(() => {
+	      this.router.navigate(['/']);
+	  });
 	}
 
-	private updateUser(authData) {
-	    const userData = new User(authData)
-	    const ref = this.db.object('users/' + authData.uid)
-	    ref.take(1)
-	        .subscribe(user => {
-	    	    if (!user.role) {
-	            ref.update(userData)
-	        }
-	    })
+	private updateUserData(user) {
+	    // Sets user data to firestore on login
+	    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
+	    const data: User = {
+		    uid: user.uid,
+	    	email: user.email,
+	      	role : {
+	      		user: true
+	      	}
+	    }
+	    return userRef.set(data, { merge: true })
+	}
+
+
+	///// Role-based Authorization //////
+
+	canPurchase(user: User): boolean {
+	  const allowed = ['admin', 'user']
+	  return this.checkAuthorization(user, allowed)
+	}
+
+	canUpdate(user: User): boolean {
+	  const allowed = ['admin']
+	  return this.checkAuthorization(user, allowed)
+	}
+
+	// canDelete(user: User): boolean {
+	//   const allowed = ['admin']
+	//   return this.checkAuthorization(user, allowed)
+	// }
+
+	// determines if user has matching role
+	private checkAuthorization(user: User, allowedRoles: string[]): boolean {
+	  if (!user) return false
+	  for (const role of allowedRoles) {
+	    if ( user.role[role] ) {
+	      return true
+	    }
+	  }
+	  return false
+	}
 
 
 
@@ -123,7 +176,7 @@ export class AuthService {
 
 
 
-	
+
 //   currentUser: User = new User();
 
 //   constructor(private userService: UserService,
