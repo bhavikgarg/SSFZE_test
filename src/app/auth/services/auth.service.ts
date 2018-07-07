@@ -9,13 +9,14 @@ import { User } from './modals/user.modal'
 import { BehaviorSubject, Observable, of } from 'rxjs';
 // import 'rxjs/add/observable/of';
 // import 'rxjs/add/operator/switchMap';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, map } from 'rxjs/operators';
 
 @Injectable()
 export class AuthService {
 
 	// user: BehaviorSubject<User> = new BehaviorSubject(null);
   	user$: Observable<User>;
+  	currentUser: any;
   	// user: User;
 
   	// ngOnInit() {
@@ -24,7 +25,7 @@ export class AuthService {
 	// loggedIn = false;
 	// isAdmin = false;
 
-	// authState: any = null;
+	authState: any = null;
 
 	constructor(
 		public afAuth:AngularFireAuth,
@@ -68,6 +69,7 @@ export class AuthService {
 	private oAuthLogin(provider) {
 	  return this.afAuth.auth.signInWithPopup(provider)
 	    .then((credential) => {
+	    	console.log("credential : ", credential)
 	      this.updateUserData(credential.user)
 	    })
 	}
@@ -139,30 +141,58 @@ export class AuthService {
 	// }
 
 
- //    userRegisterWithEmail(email: string, password: string){
- //    	return this.afAuth.auth.createUserWithEmailAndPassword(email, password)
-	//   	.then((data)=> {
-	//   		console.log(this.afAuth.auth.currentUser.photoURL);
-	//   		console.log(this.afAuth.auth.currentUser.displayName);
-	// 		this.authState = data;
-	//   	})
-	//   	.catch((err)=> {
-	//   		console.log('Error', err.message);
-	//   		throw err;  		
-	//   	})
- //  	}
+    userRegisterWithEmail(data){
+    	return this.afAuth.auth.createUserWithEmailAndPassword(data.email, data.password)
+	  	.then((data)=> {
+	  		// console.log(this.afAuth.auth.currentUser.photoURL);
+	  		// console.log(this.afAuth.auth.currentUser.displayName);
+			this.authState = data;
+	  	})
+	  	.catch((err)=> {
+	  		console.log('Error', err.message);
+	  		throw err;  		
+	  	})
+  	}
 
  
- //  	loginWithEmail(email: string, password: string) {
- //    	return this.afAuth.auth.signInWithEmailAndPassword(email, password)
- //  		.then((user) => {
- //    		this.authState = user
- //  		})
- //  		.catch(error => {
- //    		console.log(error)
- //    	throw error
- //  		});
-	// } 
+  	loginWithEmail(data) {
+    	return this.afAuth.auth.signInWithEmailAndPassword(data.email, data.password)
+  		.then((user) => {
+    		this.authState = user
+    		this.updateUserData(user.user);
+    		this.setCurrentUser(user.user);
+    		return user;
+  		})
+  		.catch(error => {
+    		console.log(error)
+    	throw error
+  		});
+	} 
+
+	setCurrentUser(user){
+		console.log(user.uid)
+		let collection = this.afs.collection('users');
+		this.currentUser = collection.snapshotChanges().pipe(map(
+			changes => {
+				return changes.map(
+					a => {
+						if(a.payload.doc.id == user.uid){
+							const data = a.payload.doc.data();
+							data['id'] = a.payload.doc.id;
+							return data;
+						}
+				});
+			})
+		)
+		console.log(this.currentUser)
+	}
+
+
+	deleteCurrentUser(){
+		this.currentUser.subscribe(res => console.log("res,", res))
+		// let userDoc = this.afs.doc(	`users/${this.currentUser.user.uid}`);
+		// userDoc.delete();
+	}
 
  //  	signOut(): void {
  //    	this.afAuth.auth.signOut();

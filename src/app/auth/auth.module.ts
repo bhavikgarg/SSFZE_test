@@ -20,7 +20,7 @@ const components = [
         ReactiveFormsModule
     ],
     providers : [
-        AuthService,
+        // AuthService,
         AngularFirestore
     ],
     bootstrap : []

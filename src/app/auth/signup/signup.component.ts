@@ -39,18 +39,20 @@ export class SignupComponent {
     // }
   }
     
-  onSignUp(): void {
+  onSubmit(): void {
     // this.clearErrorMessage();
     // this.errorMessage = this.valdator.validateForm(this.email, this.password);
-    // if (this.errorMessage === '') {
-		  // this.authService.userRegisterWithEmail(this.email, this.password)
-		  //   .then(() => {
-			 //    this.router.navigateByUrl('auth/login');  	
-		  //   }).catch(_error => {
-		  //     this.error = _error
-		  //     // this.router.navigate(['/'])
-		  //   })
-	   //  }
+    if (this.registerForm.valid) {
+		  this.authService.userRegisterWithEmail(this.registerForm.value)
+		    .then((user) => {
+			    this.router.navigateByUrl('auth/login');  	
+          console.log(user);
+		    }).catch(_error => {
+          console.log("ERROR", _error)
+          alert(_error.message);
+		      // this.router.navigate(['/'])
+		    })
+	    }
 	}
 
   navigateLogin(){

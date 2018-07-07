@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ManageCoinService } from './manage-coin.service'
 import { Coin } from './modal/coin-modal'
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { AuthService } from '../auth/services/auth.service'
+
 
 @Component({
   selector: 'manage-coin',
@@ -13,14 +15,18 @@ export class ManageCoinComponent {
 	coinForm: FormGroup;
 	coinToEdit: Coin;
 
+	currentUserRoles: any;
+
 	constructor(
 		private coinService: ManageCoinService,
-		private formBuilder: FormBuilder
+		private formBuilder: FormBuilder,
+		private authSerive: AuthService
 		){
 	}
 
 	ngOnInit(){
 		this.initializeForm();
+		this.getCurrentUserRole()
 		this.coinService.coins.subscribe(
 			(coin: Coin[]) => {
 			this.arr = coin;
@@ -72,6 +78,16 @@ export class ManageCoinComponent {
 	resetForm(){
 		this.coinToEdit = undefined;
 		this.coinForm.reset();
+	}
+
+	getCurrentUserRole(){
+		this.authSerive.currentUser
+		.subscribe(
+			res => {
+				console.log(res[0].role);
+				this.currentUserRoles = res[0].role['admin'] === true ? 'admin' : 'user';
+				console.log(this.currentUserRoles);
+			});
 	}
 
 }

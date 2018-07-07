@@ -1,4 +1,4 @@
-<!-- 
+
 
 <div class="container">
 	<div class="col-sm-offset-2 col-sm-10">
@@ -30,15 +30,13 @@
 			<p class="text-muted m-t-30">New user? <a (click)="navigateSignup()">Click here to register</a></p>
 		</div>
 	</div>
-</div> -->
+</div>
+<!-- <button class="btn btn-lg btn-default" (click)="auth.deleteCurrentUser()" type="button">Logout</button> -->
+<router-outlet></router-outlet>
 
-
-<div *ngIf="auth.user | async; then authenticated else guest">
-        <!-- template will replace this div -->
+<!-- <div *ngIf="auth.user | async; then authenticated else guest">
 </div>
 
-
-<!-- User NOT logged in -->
 <ng-template #guest>
     <h3>Hello, GUEST</h3>
     <p>Login to get started...</p>
@@ -49,14 +47,11 @@
 
 </ng-template>
 
-
-<!-- User logged in -->
 <ng-template #authenticated>
     <div *ngIf="auth.user | async as user">
         <h3>Hello, {{ user.displayName }}</h3>
-        <!-- <img  [src]="user.photoURL"> -->
         <p>UID: {{ user.uid }}</p>
         <p>email: {{ user.email }} </p>
         <button (click)="auth.signOut()">Logout</button>
     </div>
-</ng-template>
+</ng-template> -->
