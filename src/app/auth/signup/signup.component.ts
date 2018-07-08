@@ -44,9 +44,13 @@ export class SignupComponent {
     // this.errorMessage = this.valdator.validateForm(this.email, this.password);
     if (this.registerForm.valid) {
 		  this.authService.userRegisterWithEmail(this.registerForm.value)
-		    .then((user) => {
-			    this.router.navigateByUrl('auth/login');  	
-          console.log(user);
+		    .then((response) => {
+          console.log(response);
+          if(response) {
+            this.authService.updateUserData(response.user);
+          }
+          alert("User registered successfully");
+			    this.router.navigateByUrl('auth/login');  	          
 		    }).catch(_error => {
           console.log("ERROR", _error)
           alert(_error.message);

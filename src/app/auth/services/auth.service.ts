@@ -4,7 +4,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 // import { AngularFireDatabase } from 'angularfire2/database';
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import * as firebase from 'firebase/app';
-import { User } from './modals/user.modal'
+import { User } from './modals/user.modal';
 
 import { BehaviorSubject, Observable, of } from 'rxjs';
 // import 'rxjs/add/observable/of';
@@ -15,6 +15,7 @@ import { switchMap, map } from 'rxjs/operators';
 export class AuthService {
 
 	// user: BehaviorSubject<User> = new BehaviorSubject(null);
+	isLoggedIn : BehaviorSubject<Boolean> = new BehaviorSubject<Boolean>(false);
   	user$: Observable<User>;
   	currentUser: any;
   	// user: User;
@@ -28,10 +29,10 @@ export class AuthService {
 	authState: any = null;
 
 	constructor(
-		public afAuth:AngularFireAuth,
+		public afAuth: AngularFireAuth,
 		// public db: AngularFireDatabase,
       	private afs: AngularFirestore,
-      	private router: Router){
+      	private router: Router) {
 
 		this.user$ = this.afAuth.authState.pipe(switchMap(user => {
 				if (user) {
@@ -80,7 +81,7 @@ export class AuthService {
 	  });
 	}
 
-	private updateUserData(user) {
+	updateUserData(user) {
 	    // Sets user data to firestore on login
 	    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
 	    const data: User = {
@@ -141,32 +142,24 @@ export class AuthService {
 	// }
 
 
-    userRegisterWithEmail(data){
-    	return this.afAuth.auth.createUserWithEmailAndPassword(data.email, data.password)
-	  	.then((data)=> {
-	  		// console.log(this.afAuth.auth.currentUser.photoURL);
-	  		// console.log(this.afAuth.auth.currentUser.displayName);
-			this.authState = data;
-	  	})
-	  	.catch((err)=> {
-	  		console.log('Error', err.message);
-	  		throw err;  		
-	  	})
+    userRegisterWithEmail(data) {
+    	return this.afAuth.auth.createUserWithEmailAndPassword(data.email, data.password);
   	}
 
  
   	loginWithEmail(data) {
     	return this.afAuth.auth.signInWithEmailAndPassword(data.email, data.password)
-  		.then((user) => {
-    		this.authState = user
-    		this.updateUserData(user.user);
-    		this.setCurrentUser(user.user);
-    		return user;
-  		})
-  		.catch(error => {
-    		console.log(error)
-    	throw error
-  		});
+			.then((user) => {
+				this.authState = user;
+				// save user id in cookie 
+
+				this.setCurrentUser(user.user);
+				return user;
+			})
+			.catch(error => {
+				console.log(error)
+				throw error
+			});
 	} 
 
 	setCurrentUser(user){
