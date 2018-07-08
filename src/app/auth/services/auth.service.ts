@@ -89,6 +89,9 @@ export class AuthService {
 	    	email: user.email,
 	      	role : {
 	      		user: true
+	      	},
+	      	coinBalance : {
+	      		...user.coinBalance
 	      	}
 	    }
 	    return userRef.set(data, { merge: true })
@@ -153,7 +156,8 @@ export class AuthService {
 				this.authState = user;
 				// save user id in cookie 
 
-				this.setCurrentUser(user.user);
+				// this.setCurrentUser(user.user);
+				this.updateUserData(user.user);
 				return user;
 			})
 			.catch(error => {
@@ -162,23 +166,25 @@ export class AuthService {
 			});
 	} 
 
-	setCurrentUser(user){
-		console.log(user.uid)
-		let collection = this.afs.collection('users');
-		this.currentUser = collection.snapshotChanges().pipe(map(
-			changes => {
-				return changes.map(
-					a => {
-						if(a.payload.doc.id == user.uid){
-							const data = a.payload.doc.data();
-							data['id'] = a.payload.doc.id;
-							return data;
-						}
-				});
-			})
-		)
-		console.log(this.currentUser)
-	}
+	// setCurrentUser(user){
+	// 	console.log(user.uid)
+	// 	let collection = this.afs.collection('users');
+	// 	this.currentUser = collection.snapshotChanges().pipe(map(
+	// 		changes => {
+	// 			return changes.map(
+	// 				a => {
+	// 					if(a.payload.doc.id == user.uid){
+	// 						const data = a.payload.doc.data();
+	// 						data['id'] = a.payload.doc.id;
+	// 						return data;
+	// 					}
+	// 			}).filter(
+	// 				user => {
+	// 					return user !== undefined;
+	// 				})
+	// 		})
+	// 	)
+	// }
 
 
 	deleteCurrentUser(){

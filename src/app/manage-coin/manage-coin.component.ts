@@ -1,3 +1,4 @@
+import {Router} from '@angular/router';
 import { Component } from '@angular/core';
 import { ManageCoinService } from './manage-coin.service'
 import { Coin } from './modal/coin-modal'
@@ -14,11 +15,19 @@ export class ManageCoinComponent {
 	arr: Coin[] = [];
 	coinForm: FormGroup;
 	coinToEdit: Coin;
+	coinToBuy: Coin;
 
-	currentUserRoles: any;
+	//for modal
+	display='none';
+
+	currentUserRoles: any = localStorage.getItem('currentUserRole');
+	currentCoinStatus = [];
+	bal;
+	buyAmmount;
 
 	constructor(
 		private coinService: ManageCoinService,
+    	private router: Router,
 		private formBuilder: FormBuilder,
 		private authSerive: AuthService
 		){
@@ -30,6 +39,7 @@ export class ManageCoinComponent {
 		this.coinService.coins.subscribe(
 			(coin: Coin[]) => {
 			this.arr = coin;
+			console.log(this.arr);
 			}
 		);
 	}
@@ -66,7 +76,6 @@ export class ManageCoinComponent {
 	}
 
 	onDelete(coin: Coin){
-		console.log(coin);
 		this.coinService.deleteCoin(coin);
 	}
 
@@ -81,13 +90,68 @@ export class ManageCoinComponent {
 	}
 
 	getCurrentUserRole(){
-		this.authSerive.currentUser
+		this.authSerive.user$
 		.subscribe(
 			res => {
-				console.log(res[0].role);
-				this.currentUserRoles = res[0].role['admin'] === true ? 'admin' : 'user';
-				console.log(this.currentUserRoles);
+				console.log(res);
+				if(res){
+					localStorage.setItem('currentUser', JSON.stringify(res));
+					this.currentUserRoles = res.role['admin'] === true ? 'admin' : 'user';
+					localStorage.setItem('currentUserRole', this.currentUserRoles);
+					this.getCurrentCoinStatus();
+				}
 			});
 	}
 
+	onBuy(coin){
+		this.coinToBuy = coin;
+		this.openModal();
+	}
+
+	openModal(){
+	    this.display='block'; 
+	}
+
+	onCloseHandled(){
+	    this.display='none'; 
+	    this.coinToBuy = null;
+	    this.buyAmmount = undefined;
+	}
+
+	buyCoin(buyAmmount){
+		let currentCoinStatus = JSON.parse(localStorage.getItem('currentUser'));
+		if(!currentCoinStatus.coinBalance){
+			currentCoinStatus.coinBalance = {};
+		}
+		let currentBal = currentCoinStatus.coinBalance[this.coinToBuy.ticker];
+		if(currentBal){
+			currentCoinStatus.coinBalance[this.coinToBuy.ticker] = currentBal + buyAmmount;			
+		} else{
+			currentCoinStatus.coinBalance[this.coinToBuy.ticker] = buyAmmount;
+		}
+
+		this.authSerive.updateUserData(currentCoinStatus);
+
+		this.coinToBuy.availableCryptos = this.coinToBuy.availableCryptos - buyAmmount;
+		this.coinService.updateCoin(this.coinToBuy);
+		localStorage.setItem('currentUser', JSON.stringify(currentCoinStatus));
+		this.getCurrentCoinStatus();
+		this.onCloseHandled();
+	}
+
+	getCurrentCoinStatus(){
+		this.bal = JSON.parse(localStorage.getItem('currentUser')).coinBalance;
+		this.currentCoinStatus = [];
+		for(let coin of Object.keys(this.bal)){
+			this.currentCoinStatus.push({
+				ticker: coin,
+				bal: this.bal[coin]
+			})
+		}
+	}
+
+	logout(){
+		localStorage.clear();
+    	this.router.navigateByUrl('auth/login');
+	}
 }
