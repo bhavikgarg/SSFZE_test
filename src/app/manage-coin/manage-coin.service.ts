@@ -14,16 +14,7 @@ export class ManageCoinService{
 	constructor(private afs: AngularFirestore){
 
 		this.coinsCollection = this.afs.collection('coinbase', x => x.orderBy('buyAmount', 'desc').limit(10));
-		this.coins = this.coinsCollection.snapshotChanges().pipe(map(
-					changes => {
-						return changes.map(
-							a => {
-								const data = a.payload.doc.data() as Coin;
-								data.id = a.payload.doc.id;
-								return data;
-						});
-					})
-				);
+		this.coins = this.getCoinSubscriber();
 	}
 
 	getCoinSubscriber(){
@@ -57,11 +48,5 @@ export class ManageCoinService{
 		this.coinDoc = this.afs.doc(`coinbase/${coin.id}`);
 		this.coinDoc.delete();
 	}
-
-	// makeConnectin(){
-	// 	console.log('here from manage coin service: ', this.afs)
-	// 	this.coins = this.afs.collection('coinbase').valueChanges();
-	// 	console.log(this.coins);
-	// }
 	
 }

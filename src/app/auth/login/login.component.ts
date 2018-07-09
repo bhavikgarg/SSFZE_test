@@ -16,7 +16,6 @@ export class LoginComponent {
     private router: Router,
     private formBuilder: FormBuilder
     ){
-    // this.checkUserInfo();
   }
 
   ngOnInit() {
@@ -25,19 +24,6 @@ export class LoginComponent {
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
-
-  checkUserInfo() {
-    // if (this.auth.isUserLoggedIn) {
-      // this.router.navigate(['/user'])
-    // }
-  }
-
-  // get email(){
-  //   return this.loginForm.get('email')
-  // }
-  // get password(){
-  //   return this.loginForm.get('password')
-  // }
 
   onSubmit(): void {
   	if (this.loginForm.valid) {

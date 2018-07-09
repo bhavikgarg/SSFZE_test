@@ -6,8 +6,6 @@ import { ManageCoinRoutingModule } from './manage-coin-routing.module'
 import { ManageCoinComponent } from './manage-coin.component'
 import { ManageCoinService } from './manage-coin.service'
 
-import { AuthService } from '../auth/services/auth.service'
-
 @NgModule({
     declarations : [ManageCoinComponent],
     imports : [
@@ -19,7 +17,6 @@ import { AuthService } from '../auth/services/auth.service'
     providers : [
         AngularFirestore,
         ManageCoinService,
-        // AuthService
     ],
     bootstrap : []
 })

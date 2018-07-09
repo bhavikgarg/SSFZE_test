@@ -31,27 +31,4 @@
 		</div>
 	</div>
 </div>
-<!-- <button class="btn btn-lg btn-default" (click)="auth.deleteCurrentUser()" type="button">Logout</button> -->
 <router-outlet></router-outlet>
-
-<!-- <div *ngIf="auth.user | async; then authenticated else guest">
-</div>
-
-<ng-template #guest>
-    <h3>Hello, GUEST</h3>
-    <p>Login to get started...</p>
-    
-    <button (click)="auth.googleLogin()">
-        <i class="fa fa-google"></i> Login with Google
-    </button>
-
-</ng-template>
-
-<ng-template #authenticated>
-    <div *ngIf="auth.user | async as user">
-        <h3>Hello, {{ user.displayName }}</h3>
-        <p>UID: {{ user.uid }}</p>
-        <p>email: {{ user.email }} </p>
-        <button (click)="auth.signOut()">Logout</button>
-    </div>
-</ng-template> -->

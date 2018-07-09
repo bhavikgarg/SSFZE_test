@@ -4,7 +4,6 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 import { AngularFirestore } from 'angularfire2/firestore';
 import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent, SignupComponent } from './index';
-import { AuthService } from './services'
 
 const components = [
     LoginComponent,
@@ -20,7 +19,6 @@ const components = [
         ReactiveFormsModule
     ],
     providers : [
-        // AuthService,
         AngularFirestore
     ],
     bootstrap : []

@@ -60,7 +60,6 @@ export class SignupComponent {
 		    }).catch(_error => {
           console.log("ERROR", _error)
           alert(_error.message);
-		      // this.router.navigate(['/'])
 		    })
 	    }
 	}
