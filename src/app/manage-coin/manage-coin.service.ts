@@ -15,6 +15,19 @@ export class ManageCoinService{
 
 		this.coinsCollection = this.afs.collection('coinbase', x => x.orderBy('buyAmount', 'desc').limit(10));
 		this.coins = this.coinsCollection.snapshotChanges().pipe(map(
+					changes => {
+						return changes.map(
+							a => {
+								const data = a.payload.doc.data() as Coin;
+								data.id = a.payload.doc.id;
+								return data;
+						});
+					})
+				);
+	}
+
+	getCoinSubscriber(){
+		return this.coinsCollection.snapshotChanges().pipe(map(
 			changes => {
 				return changes.map(
 					a => {

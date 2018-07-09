@@ -6,7 +6,7 @@ import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firesto
 import * as firebase from 'firebase/app';
 import { User } from './modals/user.modal';
 
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, empty } from 'rxjs';
 // import 'rxjs/add/observable/of';
 // import 'rxjs/add/operator/switchMap';
 import { switchMap, map } from 'rxjs/operators';
@@ -39,7 +39,7 @@ export class AuthService {
 				if (user) {
 			    	return this.afs.doc<User>(`users/${user.uid}`).valueChanges()
 			  	} else {
-			    	return new Observable(null)
+			    	return empty();
 			  	}
 			})
 		)

@@ -13,6 +13,8 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 
 import { AuthService } from './auth/services/auth.service'
 
+import { AuthGuard } from './shared/authGuard.service';
+
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module'
 
@@ -36,6 +38,7 @@ import { AppRoutingModule } from './app-routing.module'
   		provide: APP_BASE_HREF, 
   		useValue: environment.baseHREF
   	},
+    AuthGuard,
     AuthService
   ],
   bootstrap: [AppComponent]

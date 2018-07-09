@@ -1,5 +1,5 @@
 import {Router} from '@angular/router';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ManageCoinService } from './manage-coin.service'
 import { Coin } from './modal/coin-modal'
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -10,7 +10,7 @@ import { AuthService } from '../auth/services/auth.service'
   selector: 'manage-coin',
   templateUrl: './manage-coin.component.html'
 })
-export class ManageCoinComponent {
+export class ManageCoinComponent implements OnInit			 {
 
 	arr: Coin[] = [];
 	coinForm: FormGroup;
@@ -36,8 +36,9 @@ export class ManageCoinComponent {
 
 	ngOnInit(){
 		this.initializeForm();
-		this.getCurrentUserAndRole()
-		this.coinService.coins.subscribe(
+		this.getCurrentUserAndRole();
+		this.getTransactionDetails();
+		this.coinService.getCoinSubscriber().subscribe(
 			(coin: Coin[]) => {
 			this.arr = coin;
 			console.log(this.arr);
@@ -100,7 +101,6 @@ export class ManageCoinComponent {
 					this.currentUser = res;
 					this.currentUserRoles = res.role['admin'] === true ? 'admin' : 'user';
 					localStorage.setItem('currentUserRole', this.currentUserRoles);
-					this.getCurrentCoinStatus();
 				}
 			});
 	}
@@ -112,6 +112,7 @@ export class ManageCoinComponent {
 				console.log(res);
 				if(res){
 					localStorage.setItem('currentUserTransactions', JSON.stringify(res));
+					this.getCurrentCoinStatus();
 				}
 			});	
 	}
