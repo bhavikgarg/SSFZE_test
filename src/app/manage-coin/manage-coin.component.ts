@@ -21,6 +21,7 @@ export class ManageCoinComponent {
 	display='none';
 
 	currentUserRoles: any = localStorage.getItem('currentUserRole');
+	currentUser: any = localStorage.getItem('currentUser');
 	currentCoinStatus = [];
 	bal;
 	buyAmmount;
@@ -35,7 +36,7 @@ export class ManageCoinComponent {
 
 	ngOnInit(){
 		this.initializeForm();
-		this.getCurrentUserRole()
+		this.getCurrentUserAndRole()
 		this.coinService.coins.subscribe(
 			(coin: Coin[]) => {
 			this.arr = coin;
@@ -89,18 +90,30 @@ export class ManageCoinComponent {
 		this.coinForm.reset();
 	}
 
-	getCurrentUserRole(){
+	getCurrentUserAndRole(){
 		this.authSerive.user$
 		.subscribe(
 			res => {
 				console.log(res);
 				if(res){
 					localStorage.setItem('currentUser', JSON.stringify(res));
+					this.currentUser = res;
 					this.currentUserRoles = res.role['admin'] === true ? 'admin' : 'user';
 					localStorage.setItem('currentUserRole', this.currentUserRoles);
 					this.getCurrentCoinStatus();
 				}
 			});
+	}
+
+	getTransactionDetails(){
+		this.authSerive.transactions$
+		.subscribe(
+			res => {
+				console.log(res);
+				if(res){
+					localStorage.setItem('currentUserTransactions', JSON.stringify(res));
+				}
+			});	
 	}
 
 	onBuy(coin){
@@ -119,35 +132,36 @@ export class ManageCoinComponent {
 	}
 
 	buyCoin(buyAmmount){
-		let currentCoinStatus = JSON.parse(localStorage.getItem('currentUser'));
-		if(!currentCoinStatus.coinBalance){
-			currentCoinStatus.coinBalance = {};
+		let currentCoinStatus = JSON.parse(localStorage.getItem('currentUserTransactions'));
+		if(!currentCoinStatus){
+			currentCoinStatus = {};
 		}
-		let currentBal = currentCoinStatus.coinBalance[this.coinToBuy.ticker];
+		let currentBal = currentCoinStatus[this.coinToBuy.ticker];
 		if(currentBal){
-			currentCoinStatus.coinBalance[this.coinToBuy.ticker] = currentBal + buyAmmount;			
+			currentCoinStatus[this.coinToBuy.ticker] = currentBal + buyAmmount;			
 		} else{
-			currentCoinStatus.coinBalance[this.coinToBuy.ticker] = buyAmmount;
+			currentCoinStatus[this.coinToBuy.ticker] = buyAmmount;
 		}
 
-		this.authSerive.updateUserData(currentCoinStatus);
+		this.authSerive.createTransactionCollectionForUser(this.currentUser, currentCoinStatus);
 
 		this.coinToBuy.availableCryptos = this.coinToBuy.availableCryptos - buyAmmount;
 		this.coinService.updateCoin(this.coinToBuy);
-		localStorage.setItem('currentUser', JSON.stringify(currentCoinStatus));
+		localStorage.setItem('currentUserTransactions', JSON.stringify(currentCoinStatus));
 		this.getCurrentCoinStatus();
 		this.onCloseHandled();
 	}
 
 	getCurrentCoinStatus(){
-		this.bal = JSON.parse(localStorage.getItem('currentUser')).coinBalance;
+		this.bal = JSON.parse(localStorage.getItem('currentUserTransactions'));
 		this.currentCoinStatus = [];
-		for(let coin of Object.keys(this.bal)){
-			this.currentCoinStatus.push({
-				ticker: coin,
-				bal: this.bal[coin]
-			})
-		}
+		if(this.bal)
+			for(let coin of Object.keys(this.bal)){
+				this.currentCoinStatus.push({
+					ticker: coin,
+					bal: this.bal[coin]
+				})
+			}
 	}
 
 	logout(){

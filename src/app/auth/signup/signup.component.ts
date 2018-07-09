@@ -22,7 +22,8 @@ export class SignupComponent {
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      displayName: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
@@ -32,22 +33,27 @@ export class SignupComponent {
   get password(){
     return this.registerForm.get('password')
   }
+  get displayName(){
+    return this.registerForm.get('displayName')
+  }
 
   checkUserInfo() {
-    // if (this.authService.isUserLoggedIn) {
-      // this.router.navigate(['/user'])
-    // }
   }
     
   onSubmit(): void {
-    // this.clearErrorMessage();
-    // this.errorMessage = this.valdator.validateForm(this.email, this.password);
     if (this.registerForm.valid) {
 		  this.authService.userRegisterWithEmail(this.registerForm.value)
 		    .then((response) => {
-          console.log(response);
+          let userData = {
+            ...response.user,
+            displayName: this.registerForm.get('displayName').value,
+            role: {
+              user: true
+            }
+          };
           if(response) {
-            this.authService.updateUserData(response.user);
+            this.authService.updateUserData(userData);
+            this.authService.createTransactionCollectionForUser(userData);
           }
           alert("User registered successfully");
 			    this.router.navigateByUrl('auth/login');  	          

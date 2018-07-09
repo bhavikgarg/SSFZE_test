@@ -7,12 +7,12 @@ export class User{
 	uid: string;
 	email: string;
 	role: Roles;
-	coinBalance: {}
+	displayName: string;
 
-	constructor(authData){
+	constructor(authData: User){
 		this.uid = authData.uid;
 		this.email = authData.email;
 		this.role = { user: true};
-		this.coinBalance = {}
+		this.displayName = authData.displayName
 	}
 }

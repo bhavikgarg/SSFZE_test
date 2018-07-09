@@ -17,6 +17,7 @@ export class AuthService {
 	// user: BehaviorSubject<User> = new BehaviorSubject(null);
 	isLoggedIn : BehaviorSubject<Boolean> = new BehaviorSubject<Boolean>(false);
   	user$: Observable<User>;
+  	transactions$: Observable<any>;
   	currentUser: any;
   	// user: User;
 
@@ -42,6 +43,15 @@ export class AuthService {
 			  	}
 			})
 		)
+
+		this.transactions$ = this.afAuth.authState.pipe(switchMap(user => {
+				if (user) {
+			    	return this.afs.doc<User>(`transaction/${user.uid}`).valueChanges()
+			  	} else {
+			    	return new Observable(null)
+			  	}
+			})
+		)
 		// this.afAuth.authState
 		// 	.pipe(switchMap(auth => {
 		// 			if(auth){
@@ -62,26 +72,27 @@ export class AuthService {
 
 	  ///// Login/Signup //////
 
-	googleLogin() {
-	  const provider = new firebase.auth.GoogleAuthProvider()
-	  return this.oAuthLogin(provider);
-	}
+	// googleLogin() {
+	//   const provider = new firebase.auth.GoogleAuthProvider()
+	//   return this.oAuthLogin(provider);
+	// }
 
-	private oAuthLogin(provider) {
-	  return this.afAuth.auth.signInWithPopup(provider)
-	    .then((credential) => {
-	    	console.log("credential : ", credential)
-	      this.updateUserData(credential.user)
-	    })
-	}
+	// private oAuthLogin(provider) {
+	//   return this.afAuth.auth.signInWithPopup(provider)
+	//     .then((credential) => {
+	//     	console.log("credential : ", credential)
+	//       this.updateUserData(credential.user)
+	//     })
+	// }
 
 	signOut() {
+		localStorage.clear();
 	  this.afAuth.auth.signOut().then(() => {
 	      this.router.navigate(['/']);
 	  });
 	}
 
-	updateUserData(user) {
+	updateUserData(user: User) {
 	    // Sets user data to firestore on login
 	    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
 	    const data: User = {
@@ -90,25 +101,28 @@ export class AuthService {
 	      	role : {
 	      		user: true
 	      	},
-	      	coinBalance : {
-	      		...user.coinBalance
-	      	}
+	      	displayName:user.displayName 
 	    }
 	    return userRef.set(data, { merge: true })
+	}
+
+	createTransactionCollectionForUser(user: User, coinData={}) {
+	    const transactionRef: AngularFirestoreDocument<any> = this.afs.doc(`transaction/${user.uid}`);
+	    return transactionRef.set(coinData, { merge: true })
 	}
 
 
 	///// Role-based Authorization //////
 
-	canPurchase(user: User): boolean {
-	  const allowed = ['admin', 'user']
-	  return this.checkAuthorization(user, allowed)
-	}
+	// canPurchase(user: User): boolean {
+	//   const allowed = ['admin', 'user']
+	//   return this.checkAuthorization(user, allowed)
+	// }
 
-	canUpdate(user: User): boolean {
-	  const allowed = ['admin']
-	  return this.checkAuthorization(user, allowed)
-	}
+	// canUpdate(user: User): boolean {
+	//   const allowed = ['admin']
+	//   return this.checkAuthorization(user, allowed)
+	// }
 
 	// canDelete(user: User): boolean {
 	//   const allowed = ['admin']
@@ -116,15 +130,15 @@ export class AuthService {
 	// }
 
 	// determines if user has matching role
-	private checkAuthorization(user: User, allowedRoles: string[]): boolean {
-	  if (!user) return false
-	  for (const role of allowedRoles) {
-	    if ( user.role[role] ) {
-	      return true
-	    }
-	  }
-	  return false
-	}
+	// private checkAuthorization(user: User, allowedRoles: string[]): boolean {
+	//   if (!user) return false
+	//   for (const role of allowedRoles) {
+	//     if ( user.role[role] ) {
+	//       return true
+	//     }
+	//   }
+	//   return false
+	// }
 
 
 
@@ -155,9 +169,7 @@ export class AuthService {
 			.then((user) => {
 				this.authState = user;
 				// save user id in cookie 
-
 				// this.setCurrentUser(user.user);
-				this.updateUserData(user.user);
 				return user;
 			})
 			.catch(error => {
@@ -187,11 +199,11 @@ export class AuthService {
 	// }
 
 
-	deleteCurrentUser(){
-		this.currentUser.subscribe(res => console.log("res,", res))
-		// let userDoc = this.afs.doc(	`users/${this.currentUser.user.uid}`);
-		// userDoc.delete();
-	}
+	// deleteCurrentUser(){
+	// 	this.currentUser.subscribe(res => console.log("res,", res))
+	// 	// let userDoc = this.afs.doc(	`users/${this.currentUser.user.uid}`);
+	// 	// userDoc.delete();
+	// }
 
  //  	signOut(): void {
  //    	this.afAuth.auth.signOut();

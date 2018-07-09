@@ -40,23 +40,16 @@ export class LoginComponent {
   // }
 
   onSubmit(): void {
-    // this.errorMessage = this.valdator.validateForm(this.email, this.password);
   	if (this.loginForm.valid) {
-      // console.log(this.loginForm.value);
-     //  this.auth.googleLogin();
-      // this.auth.updateUserData(this.loginForm.value)
       this.auth.loginWithEmail(this.loginForm.value)
         .then((user) =>{
         	alert('successfully LoggedIn');
           console.log(user);
-    		  // this.clearErrorMessage();
         	this.router.navigate(['/manage-coin'])
         })
         .catch(_error => {
-          // this.error = _error
           console.log("ERROR", _error)
           alert(_error.message);
-          // this.router.navigate(['/'])
         })
     }
   }
