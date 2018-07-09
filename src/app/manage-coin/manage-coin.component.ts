@@ -165,7 +165,6 @@ export class ManageCoinComponent {
 	}
 
 	logout(){
-		localStorage.clear();
-    	this.router.navigateByUrl('auth/login');
+		this.authSerive.signOut();
 	}
 }

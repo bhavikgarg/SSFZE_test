@@ -1,5 +1,5 @@
 <h1>Hello, {{ currentUser.displayName }} </h1>
-<button class="btn btn-lg btn-default" style="float:right" type="submit" (click)="logout()">Logout</button>
+<button class="btn btn-lg btn-default" style="position: absolute; right: 20px; top: 20px" type="submit" (click)="logout()">Logout</button>
 
 <div class="container" *ngIf="currentUserRoles === 'admin'">
 	<div class="col-sm-offset-2 col-sm-10">
@@ -116,7 +116,7 @@
   </div><!-- /.modal-dialog -->
 </div>
 
-<div *ngIf="currentUserRoles === 'user' && currentCoinStatus.length">
+<div class="container" *ngIf="currentUserRoles === 'user' && currentCoinStatus.length">
 	<h3>Your Coin Account</h3>
 	<table class="table table-striped table-hover">
 	    <thead>

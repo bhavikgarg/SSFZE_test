@@ -87,9 +87,9 @@ export class AuthService {
 
 	signOut() {
 		localStorage.clear();
-	  this.afAuth.auth.signOut().then(() => {
-	      this.router.navigate(['/']);
-	  });
+	  	this.afAuth.auth.signOut().then(() => {
+	    	this.router.navigate(['/']);
+	  	});
 	}
 
 	updateUserData(user: User) {

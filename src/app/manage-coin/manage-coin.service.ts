@@ -13,7 +13,7 @@ export class ManageCoinService{
 
 	constructor(private afs: AngularFirestore){
 
-		this.coinsCollection = this.afs.collection('coinbase', x => x.orderBy('name', 'asc'));
+		this.coinsCollection = this.afs.collection('coinbase', x => x.orderBy('buyAmount', 'desc').limit(10));
 		this.coins = this.coinsCollection.snapshotChanges().pipe(map(
 			changes => {
 				return changes.map(
