@@ -16,7 +16,6 @@ export class SignupComponent {
     private router: Router,
     private formBuilder: FormBuilder
     ){
-    // this.checkUserInfo();
   }
 
   ngOnInit() {

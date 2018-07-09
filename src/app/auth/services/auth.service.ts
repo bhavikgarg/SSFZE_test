@@ -49,7 +49,7 @@ export class AuthService {
 	}
 
 	updateUserData(user: User) {
-	    // Sets user data to firestore on login
+	    // Sets user data to firestore
 	    const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
 	    const data: User = {
 		    uid: user.uid,
@@ -76,8 +76,6 @@ export class AuthService {
     	return this.afAuth.auth.signInWithEmailAndPassword(data.email, data.password)
 			.then((user) => {
 				this.authState = user;
-				// save user id in cookie 
-				// this.setCurrentUser(user.user);
 				return user;
 			})
 			.catch(error => {
