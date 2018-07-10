@@ -7,32 +7,32 @@
 	</div>
 	<form class="form-horizontal" [formGroup]="coinForm" (ngSubmit)="onSubmit()">
 	    
-	    <div class="form-group">
-			<label class="control-label col-sm-2" for="email">Name:</label>
+	    <div class="form-group" [class.has-error]="name.touched && !name.valid">
+			<label class="control-label col-sm-2" for="name">Name:</label>
 			<div class="col-sm-10">
 	        	<input type="text" formControlName="name" class="form-control" placeholder="Name of the Coin" required autofocus>
 	        </div>
 	    </div>
-	    <div class="form-group">
-		    <label class="control-label col-sm-2" for="email">Ticker:</label>
+	    <div class="form-group" [class.has-error]="ticker.touched && !ticker.valid">
+		    <label class="control-label col-sm-2" for="ticker">Ticker:</label>
 			<div class="col-sm-10">
 	 			<input type="text" formControlName="ticker" class="form-control" placeholder="Ticker" required>
 	 		</div>
 	    </div>
-	    <div class="form-group">
-		    <label class="control-label col-sm-2" for="email">Buy Price:</label>
+	    <div class="form-group" [class.has-error]="buyAmount.touched && !buyAmount.valid">
+		    <label class="control-label col-sm-2" for="buyAmount">Buy Price:</label>
 			<div class="col-sm-10">
 	 			<input type="text" formControlName="buyAmount" class="form-control" placeholder="Buy Price" required>
 	 		</div>
 	    </div>
-	    <div class="form-group">
-		    <label class="control-label col-sm-2" for="email">Sell Price:</label>
+	    <div class="form-group" [class.has-error]="sellAmount.touched && !sellAmount.valid">
+		    <label class="control-label col-sm-2" for="sellAmount">Sell Price:</label>
 			<div class="col-sm-10">
 	 			<input type="text" formControlName="sellAmount" class="form-control" placeholder="Sell Price" required>
 	 		</div>
 	    </div>
-	    <div class="form-group">
-		    <label class="control-label col-sm-2" for="email">Available Cryptos:</label>
+	    <div class="form-group" [class.has-error]="availableCryptos.touched && !availableCryptos.valid">
+		    <label class="control-label col-sm-2" for="availableCryptos">Available Cryptos:</label>
 			<div class="col-sm-10">
 	 			<input type="text" formControlName="availableCryptos" class="form-control" placeholder="Available Cryptos" required>
 	 		</div>

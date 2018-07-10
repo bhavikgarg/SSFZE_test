@@ -4,7 +4,7 @@ import { ManageCoinService } from './manage-coin.service'
 import { Coin } from './modal/coin-modal'
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { AuthService } from '../auth/services/auth.service'
-
+import { CustomValidators } from '../shared/Validators/custom.validators'
 
 @Component({
   selector: 'manage-coin',
@@ -49,11 +49,12 @@ export class ManageCoinComponent implements OnInit			 {
 	initializeForm() {
 	  this.coinForm = this.formBuilder.group({
 	  	name: ['', Validators.required],
-	  	ticker: ['', Validators.required],
-	  	buyAmount: ['', Validators.required],
-	  	sellAmount: ['', Validators.required],
+	  	ticker: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(5)]],
+	  	buyAmount: ['', [Validators.required, CustomValidators.digitsAfterDeimal(2)]],
+	  	sellAmount: ['', [Validators.required, CustomValidators.digitsAfterDeimal(2)]],
 	  	availableCryptos: ['', Validators.required]
 	  });
+	  this.buyAmount.valueChanges.subscribe(res => console.log(this.coinForm));
 	}
 
 	get name(){ return this.coinForm.get('name') };
