@@ -8,7 +8,8 @@ import { CustomValidators } from '../shared/Validators/custom.validators'
 
 @Component({
   selector: 'manage-coin',
-  templateUrl: './manage-coin.component.html'
+  templateUrl: './manage-coin.component.html',
+  styleUrls: ['./manage-coin.component.css']
 })
 export class ManageCoinComponent implements OnInit			 {
 

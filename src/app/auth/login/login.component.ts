@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {Router} from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service'
 import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 
@@ -39,16 +39,6 @@ export class LoginComponent {
         })
     }
   }
-
-  // sendResetEmail() {
-  //   this.clearErrorMessage()
-  //   this.auth.resetPassword(this.email)
-  //     .then(() => 
-  //     	console.log('successFully send'))
-  //     .catch(_error => {
-  //       this.error = _error
-  //     })
-  // }
 
   navigateSignup(){
     this.router.navigateByUrl('auth/signup');
